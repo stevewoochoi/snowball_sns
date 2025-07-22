@@ -27,6 +27,8 @@ public class User {
     @Column(name = "joined_at")
     private LocalDateTime joinedAt;
 
+    private Integer points = 0;
+
     // Getter, Setter 등 Lombok 쓰면 @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor
     // Lombok을 안 쓸 거라면 아래처럼 직접 작성
 
@@ -105,5 +107,13 @@ public class User {
 
     public void setJoinedAt(LocalDateTime joinedAt) {
         this.joinedAt = joinedAt;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 }

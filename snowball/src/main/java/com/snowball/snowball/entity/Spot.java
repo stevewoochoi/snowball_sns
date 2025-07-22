@@ -48,4 +48,7 @@ public class Spot {
 
     @Column(name = "scope")
     private String scope; // "PRIVATE", "FRIENDS", "PUBLIC"
+    public Spot(Long id) {
+        this.id = id;
+    }
 }
