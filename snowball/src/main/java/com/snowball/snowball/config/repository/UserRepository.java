@@ -1,4 +1,4 @@
-package com.snowball.snowball.repository;
+package com.snowball.snowball.config.repository;
 
 import com.snowball.snowball.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

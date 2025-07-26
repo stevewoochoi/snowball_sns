@@ -1,7 +1,7 @@
 package com.snowball.snowball.service;
 
 import com.snowball.snowball.entity.Spot;
-import com.snowball.snowball.repository.SpotRepository;
+import com.snowball.snowball.config.repository.SpotRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

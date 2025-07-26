@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.snowball.snowball.entity.*;
 import com.snowball.snowball.entity.User;
-import com.snowball.snowball.repository.*;
+import com.snowball.snowball.config.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

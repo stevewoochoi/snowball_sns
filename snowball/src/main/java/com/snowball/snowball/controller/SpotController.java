@@ -4,8 +4,8 @@ import com.snowball.snowball.entity.Spot;
 import com.snowball.snowball.entity.Building;
 import com.snowball.snowball.entity.Category;
 import com.snowball.snowball.service.SpotService;
-import com.snowball.snowball.repository.BuildingRepository;
-import com.snowball.snowball.repository.CategoryRepository;
+import com.snowball.snowball.config.repository.BuildingRepository;
+import com.snowball.snowball.config.repository.CategoryRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;

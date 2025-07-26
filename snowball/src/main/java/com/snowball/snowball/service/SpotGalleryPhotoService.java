@@ -1,7 +1,7 @@
 package com.snowball.snowball.service;
 
 import com.snowball.snowball.entity.*;
-import com.snowball.snowball.repository.SpotGalleryPhotoRepository;
+import com.snowball.snowball.config.repository.SpotGalleryPhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
