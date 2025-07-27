@@ -21,12 +21,16 @@ public class SpotGalleryController {
     @Autowired
     private PointLogRepository pointLogRepository;
 
-    @PostMapping
-    public SpotGalleryPhoto uploadPhoto(
+    // [1] S3 presign 업로드 완료 후 DB등록 (JSON 요청)
+    @PostMapping("/presigned")
+    public SpotGalleryPhoto uploadByPresignedUrl(
             @PathVariable Long spotId,
             @RequestBody GalleryUploadRequest request,
-            @RequestAttribute("user") User uploader
+            @RequestAttribute(value = "user", required = false) User uploader
     ) {
+        if (uploader == null) {
+            uploader = userRepository.findById(1L).orElse(null);
+        }
         SpotGalleryPhoto photo = new SpotGalleryPhoto();
         photo.setSpot(new Spot(spotId));
         photo.setUploader(uploader);
@@ -35,16 +39,59 @@ public class SpotGalleryController {
         photo.setLng(request.getLng());
         SpotGalleryPhoto savedPhoto = photoRepository.save(photo);
 
-        uploader.setPoints(uploader.getPoints() + 3);
-        userRepository.save(uploader);
+        if (uploader != null) {
+            uploader.setPoints((uploader.getPoints() == null ? 0 : uploader.getPoints()) + 3);
+            userRepository.save(uploader);
 
-        PointLog log = new PointLog();
-        log.setUser(uploader);
-        log.setType(PointActionType.gallery_upload);
-        log.setTargetId(savedPhoto.getId());
-        log.setChangeAmount(3);
-        log.setDescription("갤러리 사진 업로드로 인한 포인트 적립");
-        pointLogRepository.save(log);
+            PointLog log = new PointLog();
+            log.setUser(uploader);
+            log.setType(PointActionType.gallery_upload);
+            log.setTargetId(savedPhoto.getId());
+            log.setChangeAmount(3);
+            log.setDescription("갤러리 사진 업로드로 인한 포인트 적립");
+            pointLogRepository.save(log);
+        }
+        return savedPhoto;
+    }
+
+    // [2] 기존 멀티파트 업로드 (form)
+    @PostMapping(consumes = {"multipart/form-data"})
+    public SpotGalleryPhoto uploadPhoto(
+            @PathVariable Long spotId,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            @RequestParam(value = "lat", required = false) Double lat,
+            @RequestParam(value = "lng", required = false) Double lng,
+            @RequestAttribute(value = "user", required = false) User uploader
+    ) throws Exception {
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String savePath = "/tmp/" + fileName;
+        file.transferTo(new java.io.File(savePath));
+        String imageUrl = "/uploads/" + fileName; // 실서비스 S3 대체
+
+        if (uploader == null) {
+            uploader = userRepository.findById(1L).orElse(null); // 1번 게스트
+        }
+
+        SpotGalleryPhoto photo = new SpotGalleryPhoto();
+        photo.setSpot(new Spot(spotId));
+        photo.setUploader(uploader);
+        photo.setImageUrl(imageUrl);
+        photo.setLat(lat);
+        photo.setLng(lng);
+        SpotGalleryPhoto savedPhoto = photoRepository.save(photo);
+
+        if (uploader != null) {
+            uploader.setPoints((uploader.getPoints() == null ? 0 : uploader.getPoints()) + 3);
+            userRepository.save(uploader);
+
+            PointLog log = new PointLog();
+            log.setUser(uploader);
+            log.setType(PointActionType.gallery_upload);
+            log.setTargetId(savedPhoto.getId());
+            log.setChangeAmount(3);
+            log.setDescription("갤러리 사진 업로드로 인한 포인트 적립");
+            pointLogRepository.save(log);
+        }
 
         return savedPhoto;
     }
@@ -61,6 +108,7 @@ public class SpotGalleryController {
         public Double getLng() { return lng; }
         public void setLng(Double lng) { this.lng = lng; }
     }
+
     @GetMapping
     public List<SpotGalleryPhoto> getGallery(@PathVariable Long spotId) {
         return photoRepository.findBySpotId(spotId);
