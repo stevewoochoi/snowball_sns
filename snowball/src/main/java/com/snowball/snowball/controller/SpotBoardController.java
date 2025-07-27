@@ -3,8 +3,8 @@ package com.snowball.snowball.controller;
 import com.snowball.snowball.entity.SpotBoard;
 import com.snowball.snowball.entity.SpotBoardPost;
 import com.snowball.snowball.entity.User;
-import com.snowball.snowball.config.repository.SpotBoardPostRepository;
-import com.snowball.snowball.config.repository.SpotBoardRepository;
+import com.snowball.snowball.repository.SpotBoardPostRepository;
+import com.snowball.snowball.repository.SpotBoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,10 @@ public class SpotBoardController {
 
     @GetMapping
     public List<SpotBoardPost> getBoardPosts(@PathVariable Long spotId) {
-        return postRepository.findByBoard_Spot_IdOrderByCreatedAtDesc(spotId);
+        System.out.println("[SpotBoardController] GET /api/spots/" + spotId + "/board 호출됨!");
+        List<SpotBoardPost> posts = postRepository.findByBoard_Spot_IdOrderByCreatedAtDesc(spotId);
+        System.out.println("[SpotBoardController] 반환 게시글 개수: " + posts.size());
+        return posts;
     }
 
     @PostMapping
@@ -41,8 +44,10 @@ public class SpotBoardController {
             @RequestBody CreatePostRequest req,
             @RequestAttribute("user") User author
     ) {
+        System.out.println("[SpotBoardController] POST /api/spots/" + spotId + "/board 등록 시도: " + req.getContent());
         SpotBoard board = boardRepository.findById(spotId)
                 .stream().findFirst().orElseGet(() -> {
+                    System.out.println("[SpotBoardController] 게시판 자동 생성 for spotId: " + spotId);
                     SpotBoard newBoard = new SpotBoard();
                     newBoard.setSpotId(spotId);
                     newBoard.setName("GUEST BOOK");
@@ -50,6 +55,7 @@ public class SpotBoardController {
                     return boardRepository.save(newBoard);
                 });
 
+        System.out.println("[SpotBoardController] 실제 게시글 저장! author=" + author.getId());
         SpotBoardPost post = new SpotBoardPost();
         post.setBoard(board);
         post.setAuthor(author);

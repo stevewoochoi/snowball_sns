@@ -3,9 +3,11 @@ package com.snowball.snowball.controller;
 import com.snowball.snowball.entity.Spot;
 import com.snowball.snowball.entity.Building;
 import com.snowball.snowball.entity.Category;
+import com.snowball.snowball.entity.SpotBoard;
 import com.snowball.snowball.service.SpotService;
-import com.snowball.snowball.config.repository.BuildingRepository;
-import com.snowball.snowball.config.repository.CategoryRepository;
+import com.snowball.snowball.repository.BuildingRepository;
+import com.snowball.snowball.repository.CategoryRepository;
+import com.snowball.snowball.repository.SpotBoardRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,14 +24,17 @@ public class SpotController {
     private final SpotService spotService;
     private final BuildingRepository buildingRepository;
     private final CategoryRepository categoryRepository;
+    private final SpotBoardRepository spotBoardRepository;
 
     public SpotController(
             SpotService spotService,
             BuildingRepository buildingRepository,
-            CategoryRepository categoryRepository) {
+            CategoryRepository categoryRepository,
+            SpotBoardRepository spotBoardRepository) {
         this.spotService = spotService;
         this.buildingRepository = buildingRepository;
         this.categoryRepository = categoryRepository;
+        this.spotBoardRepository = spotBoardRepository;
     }
 
     @GetMapping
@@ -49,7 +54,16 @@ public class SpotController {
         spot.setOwnerId(ownerId); // 프론트에서 받은 ownerId 저장!
         spot.setScope(scope);
         spot.setCreatedAt(LocalDateTime.now());
-        return spotService.save(spot);
+        Spot savedSpot = spotService.save(spot);
+
+        // 게시판 자동 생성
+        SpotBoard board = new SpotBoard();
+        board.setSpot(savedSpot);
+        board.setName("GUEST BOOK");
+        board.setCreatedAt(LocalDateTime.now());
+        spotBoardRepository.save(board);
+
+        return savedSpot;
     }
 
     @GetMapping("/{id}")

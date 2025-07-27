@@ -2,7 +2,7 @@
 package com.snowball.snowball.controller;
 
 import com.snowball.snowball.entity.User;
-import com.snowball.snowball.config.repository.UserRepository;
+import com.snowball.snowball.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
