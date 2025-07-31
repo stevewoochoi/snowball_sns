@@ -51,4 +51,7 @@ public class Spot {
     public Spot(Long id) {
         this.id = id;
     }
+
+    @Column(name = "use_yn", length = 1)
+    private String useYn = "Y";
 }

@@ -36,6 +36,7 @@ dependencies {
     implementation 'software.amazon.awssdk:sts'
 
     // JWT
+    implementation 'org.json:json:20240303'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.5') {

@@ -33,4 +33,8 @@ public class SpotGalleryPhoto {
     private LocalDateTime exifTakenAt;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Y: 사용, N: 논리삭제
+    @Column(name = "use_yn", length = 1)
+    private String useYn = "Y";
 }
