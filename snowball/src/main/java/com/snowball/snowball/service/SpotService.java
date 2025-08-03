@@ -3,6 +3,7 @@ package com.snowball.snowball.service;
 import com.snowball.snowball.entity.Spot;
 import com.snowball.snowball.repository.SpotRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,14 @@ public class SpotService {
         return spotRepository.findByUseYn(useYn);
     }
 
+    public List<Spot> findByUseYn(String useYn, Pageable pageable) {
+        return spotRepository.findByUseYn(useYn, pageable);
+    }
+
+    public List<Spot> findPopularSpots(Pageable pageable) {
+        return spotRepository.findPopularSpots(pageable);
+    }
+
     // id와 useYn으로 조회 (Optional로 반환)
     public Optional<Spot> findByIdAndUseYn(Long id, String useYn) {
         return spotRepository.findByIdAndUseYn(id, useYn);
@@ -40,4 +49,8 @@ public class SpotService {
     public List<Spot> findByOwnerIdAndScopeAndUseYn(Long ownerId, String scope, String useYn) {
         return spotRepository.findByOwnerIdAndScopeAndUseYn(ownerId, scope, useYn);
     }
+    
+    public List<Spot> findByScopeAndUseYn(String scope, String useYn) {
+    return spotRepository.findByScopeAndUseYn(scope, useYn);
+}
 }

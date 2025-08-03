@@ -12,4 +12,5 @@ public class Category {
     private String name;
     private String iconUrl;
     private String description;
+    
 }

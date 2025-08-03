@@ -27,6 +27,9 @@ public class User {
     @Column(name = "joined_at")
     private LocalDateTime joinedAt;
 
+    @Column(name = "level")
+    private Integer level = 1;
+
     private Integer points = 0;
 
     // Getter, Setter 등 Lombok 쓰면 @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor
@@ -113,6 +116,10 @@ public class User {
         return points;
     }
 
+    public Integer getLevel() {
+        return level;
+    }
+    
     public void setPoints(Integer points) {
         this.points = points;
     }

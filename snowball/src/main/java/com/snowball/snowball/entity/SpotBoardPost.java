@@ -26,6 +26,10 @@ public class SpotBoardPost {
     @JoinColumn(name = "author_id")
     private User author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "spot_id")
+    private Spot spot;
+
     private String content;
     private String imageUrl; // 첨부 이미지(옵션)
     private LocalDateTime createdAt;

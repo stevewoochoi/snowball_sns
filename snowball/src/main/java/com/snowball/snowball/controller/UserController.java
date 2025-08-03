@@ -1,4 +1,3 @@
-// src/main/java/com/snowball/snowball/controller/UserController.java
 package com.snowball.snowball.controller;
 
 import com.snowball.snowball.entity.User;
@@ -16,6 +15,7 @@ import java.util.Map;
 public class UserController {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
     @Autowired
     public UserController(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -33,6 +33,21 @@ public class UserController {
         resp.put("id", saved.getId());
         resp.put("nickname", saved.getNickname());
         resp.put("token", token);
+        resp.put("level", saved.getLevel());
+        return resp;
+    }
+
+    // User 정보 단건 조회 (id로)
+    @GetMapping("/{id}")
+    public Map<String, Object> getUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        Map<String, Object> resp = new HashMap<>();
+        if (user != null) {
+            resp.put("id", user.getId());
+            resp.put("nickname", user.getNickname());
+            resp.put("level", user.getLevel());
+            // 필요시 email, profile_img 등도 추가
+        }
         return resp;
     }
 }

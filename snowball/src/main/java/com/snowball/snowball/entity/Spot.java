@@ -4,9 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "spot")
 public class Spot {
     @Id
@@ -48,10 +54,16 @@ public class Spot {
 
     @Column(name = "scope")
     private String scope; // "PRIVATE", "FRIENDS", "PUBLIC"
+
     public Spot(Long id) {
         this.id = id;
     }
 
+    @Builder.Default
     @Column(name = "use_yn", length = 1)
     private String useYn = "Y";
+
+    @Builder.Default
+    @OneToMany(mappedBy = "spot", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SpotBoardPost> posts = new ArrayList<>();
 }

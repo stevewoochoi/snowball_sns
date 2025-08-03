@@ -11,6 +11,7 @@ import com.snowball.snowball.repository.SpotBoardRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,12 +41,25 @@ public class SpotController {
     }
 
     // useYn="Y"인 스팟만 조회, ownerId와 scope로 필터링 가능
+    // @GetMapping
+    // public List<Spot> getSpots(
+    // @RequestParam(required = false) Long ownerId,
+    // @RequestParam(required = false) String scope) {
+    // if (ownerId != null && scope != null) {
+    // return spotService.findByOwnerIdAndScopeAndUseYn(ownerId, scope, "Y");
+    // } else {
+    // return spotService.findByUseYn("Y");
+    // }
+    // }
     @GetMapping
     public List<Spot> getSpots(
             @RequestParam(required = false) Long ownerId,
             @RequestParam(required = false) String scope) {
         if (ownerId != null && scope != null) {
             return spotService.findByOwnerIdAndScopeAndUseYn(ownerId, scope, "Y");
+        } else if (scope != null) {
+            // ownerId 없이 scope만 있으면 해당 scope 전체 반환 (예: OFFICIAL)
+            return spotService.findByScopeAndUseYn(scope, "Y");
         } else {
             return spotService.findByUseYn("Y");
         }
@@ -125,4 +139,19 @@ public class SpotController {
         return ResponseEntity.ok(spot);
     }
 
+    // 최근 생성된 스팟 목록 (최신순)
+    @GetMapping("/recent")
+    public List<Spot> getRecentSpots(@RequestParam(defaultValue = "8") int limit) {
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                        "createdAt"));
+        return spotService.findByUseYn("Y", pageable);
+    }
+
+    // 인기 스팟 목록 (게시글 많은 순)
+    @GetMapping("/popular")
+    public List<Spot> getPopularSpots(@RequestParam(defaultValue = "8") int limit) {
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+        return spotService.findPopularSpots(pageable);
+    }
 }
