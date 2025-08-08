@@ -1,9 +1,12 @@
 package com.snowball.snowball.service;
 
+import com.snowball.snowball.dto.SpotDto;
 import com.snowball.snowball.entity.Spot;
 import com.snowball.snowball.repository.SpotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import com.snowball.snowball.dto.SpotDto;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -65,5 +68,13 @@ public class SpotService {
 
     public List<Spot> findPopularVisibleSpots(Long viewerId, Pageable pageable) {
         return spotRepository.findPopularVisibleSpots(viewerId, pageable);
+    }
+
+    public List<SpotDto> findRecentVisibleSpotsWithOwnerNickname(Long viewerId, Pageable pageable) {
+        return spotRepository.findRecentVisibleSpotsWithOwnerNickname(viewerId, pageable);
+    }
+
+    public List<SpotDto> findPopularVisibleSpotsWithOwnerNickname(Long viewerId, Pageable pageable) {
+        return spotRepository.findPopularVisibleSpotsWithOwnerNickname(viewerId, pageable);
     }
 }

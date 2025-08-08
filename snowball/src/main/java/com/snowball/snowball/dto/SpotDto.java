@@ -16,4 +16,7 @@ public class SpotDto {
     private String ownerNickname;
     private Double lat;
     private Double lng;
+    private String buildingIconUrl;
+    private String categoryIconUrl;
+
 }

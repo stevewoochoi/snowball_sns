@@ -14,6 +14,8 @@ import com.snowball.snowball.repository.UserRepository;
 import com.snowball.snowball.entity.Spot;
 import com.snowball.snowball.entity.User;
 import com.snowball.snowball.service.SpotService;
+import com.snowball.snowball.dto.SpotDto;
+
 
 @RestController
 @RequestMapping("/api/search")
@@ -91,20 +93,34 @@ public class SearchController {
     // return spotRepository.findPopularSpots(pageable); // 별도 JPQL/Native Query 필요
     // }
 
+    // @GetMapping("/recent")
+    // public List<Spot> getRecentSpots(
+    //         @RequestParam Long viewerId,
+    //         @RequestParam(defaultValue = "8") int limit) {
+    //     Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+    //     return spotService.findRecentVisibleSpots(viewerId, pageable);
+    // }
+
+    // @GetMapping("/popular")
+    // public List<Spot> getPopularSpots(
+    //         @RequestParam Long viewerId,
+    //         @RequestParam(defaultValue = "8") int limit) {
+    //     Pageable pageable = PageRequest.of(0, limit);
+    //     return spotService.findPopularVisibleSpots(viewerId, pageable);
+    // }
+
     @GetMapping("/recent")
-    public List<Spot> getRecentSpots(
-            @RequestParam Long viewerId,
+    public List<SpotDto> getRecentSpots(@RequestParam Long viewerId,
             @RequestParam(defaultValue = "8") int limit) {
         Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return spotService.findRecentVisibleSpots(viewerId, pageable);
+        return spotService.findRecentVisibleSpotsWithOwnerNickname(viewerId, pageable);
     }
 
     @GetMapping("/popular")
-    public List<Spot> getPopularSpots(
-            @RequestParam Long viewerId,
+    public List<SpotDto> getPopularSpots(@RequestParam Long viewerId,
             @RequestParam(defaultValue = "8") int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return spotService.findPopularVisibleSpots(viewerId, pageable);
+        return spotService.findPopularVisibleSpotsWithOwnerNickname(viewerId, pageable);
     }
 
 }

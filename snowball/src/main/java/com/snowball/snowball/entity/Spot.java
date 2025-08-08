@@ -52,6 +52,7 @@ public class Spot {
     @JoinColumn(name = "building_id")
     private Building building;
 
+
     @Column(name = "scope")
     private String scope; // "PRIVATE", "FRIENDS", "PUBLIC"
 

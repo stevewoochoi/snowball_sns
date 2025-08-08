@@ -1,6 +1,7 @@
 package com.snowball.snowball.repository;
 
 import com.snowball.snowball.entity.Spot;
+import com.snowball.snowball.dto.SpotDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -133,5 +134,60 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
                 ORDER BY COUNT(p) DESC
             """)
     List<Spot> findPopularVisibleSpots(@Param("viewerId") Long viewerId, Pageable pageable);
+
+    // === DTO projections including owner nickname (for recent/popular lists) ===
+    @Query("""
+        SELECT new com.snowball.snowball.dto.SpotDto(
+            s.id, s.name, s.iconUrl, s.scope, s.ownerId, o.nickname, s.lat, s.lng, s.building.iconUrl, s.category.iconUrl
+        )
+        FROM Spot s
+        LEFT JOIN User o ON o.id = s.ownerId
+        WHERE s.useYn = 'Y'
+          AND (
+            s.ownerId = :viewerId
+            OR s.scope = 'PUBLIC'
+            OR s.scope = 'OFFICIAL'
+            OR (
+              s.scope = 'FRIENDS'
+              AND EXISTS (
+                SELECT 1 FROM UserFriend uf
+                WHERE uf.user.id = s.ownerId
+                  AND uf.friend.id = :viewerId
+                  AND uf.status = 'ACCEPTED'
+              )
+            )
+          )
+        ORDER BY s.createdAt DESC
+    """)
+    List<SpotDto> findRecentVisibleSpotsWithOwnerNickname(@Param("viewerId") Long viewerId,
+                                                          Pageable pageable);
+
+    @Query("""
+        SELECT new com.snowball.snowball.dto.SpotDto(
+            s.id, s.name, s.iconUrl, s.scope, s.ownerId, o.nickname, s.lat, s.lng, s.building.iconUrl, s.category.iconUrl
+        )
+        FROM Spot s
+        LEFT JOIN s.posts p
+        LEFT JOIN User o ON o.id = s.ownerId
+        WHERE s.useYn = 'Y'
+          AND (
+            s.ownerId = :viewerId
+            OR s.scope = 'PUBLIC'
+            OR s.scope = 'OFFICIAL'
+            OR (
+              s.scope = 'FRIENDS'
+              AND EXISTS (
+                SELECT 1 FROM UserFriend uf
+                WHERE uf.user.id = s.ownerId
+                  AND uf.friend.id = :viewerId
+                  AND uf.status = 'ACCEPTED'
+              )
+            )
+          )
+        GROUP BY s.id, s.name, s.iconUrl, s.scope, s.ownerId, o.nickname, s.lat, s.lng, s.building.iconUrl, s.category.iconUrl
+        ORDER BY COUNT(p) DESC
+    """)
+    List<SpotDto> findPopularVisibleSpotsWithOwnerNickname(@Param("viewerId") Long viewerId,
+                                                           Pageable pageable);
 
 }
