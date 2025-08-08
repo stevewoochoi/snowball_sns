@@ -51,14 +51,20 @@ public class SpotController {
     // return spotService.findByUseYn("Y");
     // }
     // }
+    // Spot 목록 조회 (내 맵, 남의 맵, 공개, 전체)
     @GetMapping
     public List<Spot> getSpots(
             @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) Long viewerId,
             @RequestParam(required = false) String scope) {
-        if (ownerId != null && scope != null) {
-            return spotService.findByOwnerIdAndScopeAndUseYn(ownerId, scope, "Y");
+        if (ownerId != null && viewerId != null && ownerId.equals(viewerId)) {
+            return spotService.findByOwnerIdAndUseYn(ownerId, "Y");
+        } else if (ownerId != null && viewerId != null) {
+            return spotService.findVisibleSpotsForViewer(ownerId, viewerId);
+        } else if (ownerId != null) {
+            return spotService.findByOwnerIdAndUseYn(ownerId, "Y");
         } else if (scope != null) {
-            // ownerId 없이 scope만 있으면 해당 scope 전체 반환 (예: OFFICIAL)
+            // 👇 방금 만든 서비스 메서드 호출
             return spotService.findByScopeAndUseYn(scope, "Y");
         } else {
             return spotService.findByUseYn("Y");
